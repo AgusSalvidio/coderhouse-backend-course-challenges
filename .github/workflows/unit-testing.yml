@@ -1,7 +1,12 @@
 name: Unit Tests
 
-on: [pull_request]
-
+on:
+  push:
+    branches:
+      - "release-candidate"
+  pull_request:
+    types:
+      - opened
 jobs:
   tests:
     runs-on: ubuntu-latest
