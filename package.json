@@ -1,0 +1,16 @@
+{
+  "name": "coderhouse-backend-course-challenges",
+  "version": "1.0.0",
+  "description": "Backend Course Challenge 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --coverage"
+  },
+  "keywords": [],
+  "type": "module",
+  "author": "Agustin Salvidio",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
