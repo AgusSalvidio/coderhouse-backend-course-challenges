@@ -1,8 +1,8 @@
-import { Product } from "../Product/Product";
+import { Product } from "../Product/Product.js";
 
 export class ProductManager {
   constructor() {
-    this.products = products;
+    this.products = [];
   }
 
   assertSatisfiesAllRequiredParameters = ({
@@ -26,7 +26,7 @@ export class ProductManager {
       throw new Error(`Ya existe un producto con el código ${aCodeId}`);
   };
 
-  nextSequentialNumber = () => this.products.lenght + 1;
+  nextSequentialNumber = () => this.products.length + 1;
 
   initializeProductUsing = ({
     title,
@@ -37,6 +37,7 @@ export class ProductManager {
     stock,
   }) => {
     const id = this.nextSequentialNumber();
+
     return new Product({
       id,
       title,
@@ -58,11 +59,11 @@ export class ProductManager {
       this.assertSatisfiesAllRequiredParameters(aPotentialProduct);
       this.assertCodeIsNotAlreadyStored(aPotentialProduct.code);
 
-      const product = initializeProductUsing(aPotentialProduct);
+      const product = this.initializeProductUsing(aPotentialProduct);
 
-      this.products(product);
+      this.products.push(product);
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
     }
   };
 
@@ -74,13 +75,13 @@ export class ProductManager {
 
   getProductById = (anId) => {
     try {
-      this.assertHasProducts;
-      let product = products.find((product) => product.id === anId);
+      this.assertHasProducts();
+      let product = this.products.find((product) => product.id === anId);
       if (!product)
         throw new Error(`No se encuentra el producto con ID ${anId}`);
       return product;
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
     }
   };
 }
