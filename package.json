@@ -9,5 +9,8 @@
   "keywords": [],
   "type": "module",
   "author": "Agustin Salvidio",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
