@@ -18,11 +18,8 @@ export class ProductManager {
   };
 
   assertCodeIsNotAlreadyStored = (aCodeId) => {
-    const productIndex = this.products.findIndex(
-      (product) => product.code === aCodeId
-    );
-
-    if (productIndex !== -1)
+    const sameCodeId = (product) => product.code === aCodeId;
+    if (this.products.some(sameCodeId))
       throw new Error(`Ya existe un producto con el código ${aCodeId}`);
   };
 
@@ -70,13 +67,13 @@ export class ProductManager {
   getProducts = () => this.products;
 
   assertHasProducts = () => {
-    if (this.products.length === 0) throw new Error("No hay productos");
+    if (!this.products.length) throw new Error("No hay productos");
   };
 
   getProductById = (anId) => {
     try {
       this.assertHasProducts();
-      let product = this.products.find((product) => product.id === anId);
+      const product = this.products.find((product) => product.id === anId);
       if (!product)
         throw new Error(`No se encuentra el producto con ID ${anId}`);
       return product;
