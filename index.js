@@ -1,4 +1,5 @@
-import { ProductManager } from "./ProductManager/ProductManager.js";
+import { ProductManager } from "./src/main/ProductManager/ProductManager.js";
+import { MemoryBasedPersistenceSystem } from "./src/main/PersistenceSystem/MemoryBasedPersistenceSystem.js";
 
 const sampleExecution = () => {
   /* I replicate the same that has been already created for a test, to allow to play with the
@@ -13,7 +14,9 @@ const sampleExecution = () => {
     stock: 25,
   };
 
-  const productManager = new ProductManager();
+  const memoryBasedPersistenceSystem = new MemoryBasedPersistenceSystem();
+
+  const productManager = new ProductManager(memoryBasedPersistenceSystem);
 
   console.log(productManager.getProducts());
 

@@ -1,4 +1,4 @@
-import { PersistenceSystem } from "./PersistenceSystem";
+import { PersistenceSystem } from "./PersistenceSystem.js";
 
 /* This should be an implementation of PersistenceSystem, but JS doesn't allow "implements" 
    and TS does, so for this stage i'll extend it. -asalvidio*/
