@@ -1,8 +1,8 @@
 import { Product } from "../Product/Product.js";
 
 export class ProductManager {
-  constructor() {
-    this.products = [];
+  constructor(persistenceSystem) {
+    this.persistenceSystem = persistenceSystem;
   }
 
   assertSatisfiesAllRequiredParameters = ({
@@ -13,17 +13,23 @@ export class ProductManager {
     code,
     stock,
   }) => {
+    /*This assertion should be made with a product already instanciated and by its class side assertion,
+    but to comply with the exercise statement, is checked here, and also the manager has the responsability to
+    instanciate the product. However, i would prefered that the manager received and already instanciated (and validated)
+    Product object, and only check for the repeated code. -asalvidio*/
+
     if (!title || !description || !price || !thumbnail || !code || !stock)
       throw new Error("Faltan parámetros");
   };
 
   assertCodeIsNotAlreadyStored = (aCodeId) => {
-    const sameCodeId = (product) => product.code === aCodeId;
-    if (this.products.some(sameCodeId))
+    if (
+      this.persistenceSystem.anySatisfy((product) => product.code === aCodeId)
+    )
       throw new Error(`Ya existe un producto con el código ${aCodeId}`);
   };
 
-  nextSequentialNumber = () => this.products.length + 1;
+  nextSequentialNumber = () => this.getProducts().length + 1;
 
   initializeProductUsing = ({
     title,
@@ -47,38 +53,45 @@ export class ProductManager {
   };
 
   addProduct = (aPotentialProduct) => {
-    /*This assertion should be made with a product already instanciated and by its class side assertion,
-    but to comply with the exercise statement, is checked here, and also the manager has the responsability to
-    instanciate the product. However, i would prefered that the manager received and already instanciated (and validated)
-    Product object, and only check for the repeated code. -asalvidio*/
-
     try {
       this.assertSatisfiesAllRequiredParameters(aPotentialProduct);
       this.assertCodeIsNotAlreadyStored(aPotentialProduct.code);
 
       const product = this.initializeProductUsing(aPotentialProduct);
 
-      this.products.push(product);
+      this.persistenceSystem.add(product);
     } catch (error) {
       console.error(error.message);
     }
   };
 
-  getProducts = () => this.products;
+  getProducts = () => this.persistenceSystem.getAll();
 
   assertHasProducts = () => {
-    if (!this.products.length) throw new Error("No hay productos");
+    if (!this.getProducts().length) throw new Error("No hay productos");
   };
 
   getProductById = (anId) => {
     try {
       this.assertHasProducts();
-      const product = this.products.find((product) => product.id === anId);
+      const product = this.persistenceSystem.getFilteredBy(
+        (product) => product.id === anId
+      );
       if (!product)
         throw new Error(`No se encuentra el producto con ID ${anId}`);
       return product;
     } catch (error) {
       console.error(error.message);
     }
+  };
+
+  deleteProduct = (anId) => {
+    const productToDelete = this.getProductById(anId);
+    this.persistenceSystem.delete(productToDelete);
+  };
+
+  updateProduct = (anOriginalProductId, anUpdatedProduct) => {
+    const productToUpdate = this.getProductById(anOriginalProductId);
+    this.persistenceSystem.update(productToUpdate, anUpdatedProduct);
   };
 }
