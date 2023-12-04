@@ -1,6 +1,6 @@
-import { MemoryBasedPersistenceSystem } from "../../2-Challenge/PersistenceSystem/MemoryBasedPersistenceSystem";
-import { Product } from "../Product/Product";
-import { ProductManager } from "../ProductManager/ProductManager";
+import { MemoryBasedPersistenceSystem } from "../main/PersistenceSystem/MemoryBasedPersistenceSystem.js";
+import { Product } from "../main/Product/Product.js";
+import { ProductManager } from "../main/ProductManager/ProductManager.js";
 import { jest } from "@jest/globals";
 
 persistenceSystems = () => [new MemoryBasedPersistenceSystem()];
