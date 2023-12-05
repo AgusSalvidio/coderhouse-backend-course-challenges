@@ -5,12 +5,8 @@ import { promises as fs } from "node:fs";
 
 const filePath = "./resources/Products.json";
 
-cleanProductsFile = async () => {
-  await fs.writeFile(filePath, "[]", "utf-8");
-};
-
 afterEach(async () => {
-  await cleanProductsFile();
+  await fs.writeFile(filePath, "[]", "utf-8");
 });
 
 test("Create a ProductManager", async () => {
