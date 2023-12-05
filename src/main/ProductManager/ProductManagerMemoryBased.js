@@ -1,8 +1,8 @@
 import { Product } from "../Product/Product.js";
 
-export class ProductManager {
-  constructor(persistenceSystem) {
-    this.persistenceSystem = persistenceSystem;
+export class ProductManagerMemoryBased {
+  constructor() {
+    this.products = [];
   }
 
   assertSatisfiesAllRequiredParameters = ({
@@ -23,9 +23,8 @@ export class ProductManager {
   };
 
   assertCodeIsNotAlreadyStored = (aCodeId) => {
-    if (
-      this.persistenceSystem.anySatisfy((product) => product.code === aCodeId)
-    )
+    const sameCodeId = (product) => product.code === aCodeId;
+    if (this.getProducts().some(sameCodeId))
       throw new Error(`Ya existe un producto con el código ${aCodeId}`);
   };
 
@@ -40,7 +39,6 @@ export class ProductManager {
     stock,
   }) => {
     const id = this.nextSequentialNumber();
-
     return new Product({
       id,
       title,
@@ -59,24 +57,24 @@ export class ProductManager {
 
       const product = this.initializeProductUsing(aPotentialProduct);
 
-      this.persistenceSystem.add(product);
+      this.products.push(product);
     } catch (error) {
       console.error(error.message);
     }
   };
 
-  getProducts = () => this.persistenceSystem.getAll();
+  getProducts = () => this.products;
 
   assertHasProducts = () => {
     if (!this.getProducts().length) throw new Error("No hay productos");
   };
 
+  getFilteredBy = (aCriteria) => this.products.find(aCriteria);
+
   getProductById = (anId) => {
     try {
       this.assertHasProducts();
-      const product = this.persistenceSystem.getFilteredBy(
-        (product) => product.id === anId
-      );
+      const product = this.getFilteredBy((product) => product.id === anId);
       if (!product)
         throw new Error(`No se encuentra el producto con ID ${anId}`);
       return product;
@@ -87,11 +85,17 @@ export class ProductManager {
 
   deleteProduct = (anId) => {
     const productToDelete = this.getProductById(anId);
-    this.persistenceSystem.delete(productToDelete);
+    this.products = this.products.filter(
+      (product) => product !== productToDelete
+    );
   };
 
   updateProduct = (anOriginalProductId, anUpdatedProduct) => {
     const productToUpdate = this.getProductById(anOriginalProductId);
-    this.persistenceSystem.update(productToUpdate, anUpdatedProduct);
+    anUpdatedProduct.id = anOriginalProductId;
+    const index = this.products.indexOf(productToUpdate);
+    if (~index) {
+      this.products[index] = anUpdatedProduct;
+    }
   };
 }
