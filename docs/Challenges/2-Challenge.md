@@ -9,16 +9,16 @@ Realizar una clase de nombre "ProductManager", el cual permitirá trabajar con m
 1. La clase debe contar con una variable this.path, el cual se inicializará desde el constructor y debe recibir la ruta a trabajar desde el momento de generar su instancia.
 
 2. Debe guardar objetos con el siguiente formato:
-    - id (se debe incrementar automáticamente, no enviarse desde el cuerpo)
-    - title (nombre del producto)
-    - description (descripción del producto)
-    - price (precio)
-    - thumbnail (ruta de imagen)
-    - code (código identificador)
-    - stock (número de piezas disponibles)
+
+   - id (se debe incrementar automáticamente, no enviarse desde el cuerpo)
+   - title (nombre del producto)
+   - description (descripción del producto)
+   - price (precio)
+   - thumbnail (ruta de imagen)
+   - code (código identificador)
+   - stock (número de piezas disponibles)
 
 3. Debe tener un método "addProduct" el cual debe recibir un objeto con el formato previamente especificado, asignarle un id autoincrementable y guardarlo en el arreglo (recuerda siempre guardarlo como un array en el archivo).
-    
 4. Debe tener un método "getProducts" el cual debe leer el archivo de productos y devolver todos los productos en formato de arreglo.
 
 5. Debe tener un método "getProductById" el cual debe recibir un id, y tras leer el archivo, debe buscar el producto con el id especificado y devolverlo en formato objeto.
@@ -27,8 +27,7 @@ Realizar una clase de nombre "ProductManager", el cual permitirá trabajar con m
 
 7. Debe tener un método deleteProduct, el cual debe recibir un id y debe eliminar el producto que tenga ese id en el archivo.
 
-
 # Formato del entregable
 
 Archivo de Javascript con el nombre ProductManager.js
-[Proceso de testing de este entregable]()
+[Proceso de testing de este entregable](https://docs.google.com/document/d/1LERTzGXNhzUsLP4Us06McRuwITsSrxdzwFbtccQudtY/edit)
