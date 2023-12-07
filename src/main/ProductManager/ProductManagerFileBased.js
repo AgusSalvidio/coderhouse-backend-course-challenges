@@ -21,7 +21,8 @@ export class ProductManagerFileBased {
   async assertCodeIsNotAlreadyStored(aCodeId) {
     try {
       const sameCodeId = (product) => product.code === aCodeId;
-      if (await this.getProducts().some(sameCodeId))
+      const products = await this.getProducts();
+      if (products.some(sameCodeId))
         throw new Error(`Ya existe un producto con el código ${aCodeId}`);
     } catch (error) {
       throw error;
@@ -82,9 +83,15 @@ export class ProductManagerFileBased {
 
   async readFileProducts() {
     try {
-      const productsData = await fs.readFile(this.path, "utf-8");
-      const productsJs = await JSON.parse(productsData);
-      return productsJs;
+      const potentialProductsData = await fs.readFile(this.path, "utf-8");
+
+      const potentialProductsJs = await JSON.parse(potentialProductsData);
+
+      const parsedProducts = potentialProductsJs.map(
+        (potentialProduct) => new Product(potentialProduct)
+      );
+
+      return parsedProducts;
     } catch (error) {
       return [];
     }
@@ -93,26 +100,28 @@ export class ProductManagerFileBased {
   async assertHasProducts() {
     try {
       const products = await this.getProducts();
-      console.log(products.length);
       if (!products.length) throw new Error("No hay productos");
     } catch (error) {
       throw error;
     }
   }
 
-  async getFilteredBy(aCriteria) {
-    try {
-      const products = await this.getProducts();
-      return products.find(aCriteria);
-    } catch (error) {}
+  getProductFilteredBy(aCriteria, aProductCollection) {
+    return aProductCollection.find(aCriteria);
+  }
+
+  getProductsFilteredBy(aCriteria, aProductCollection) {
+    return aProductCollection.filter(aCriteria);
   }
 
   async getProductById(anId) {
     try {
       await this.assertHasProducts();
-      const product = await this.getFilteredBy(
-        (product) => product.id === anId
-      );
+      const products = await this.getProducts();
+
+      const filterCriteria = (product) => product.id === anId;
+
+      const product = this.getProductFilteredBy(filterCriteria, products);
       if (!product)
         throw new Error(`No se encuentra el producto con ID ${anId}`);
       return product;
@@ -123,12 +132,13 @@ export class ProductManagerFileBased {
 
   async deleteProduct(anId) {
     try {
-      const productToDelete = await this.getProductById(anId);
-
       let currentProducts = await this.getProducts();
 
-      currentProducts = currentProducts.filter(
-        (product) => product !== productToDelete
+      const filterCriteria = (product) => product.id !== anId;
+
+      currentProducts = this.getProductsFilteredBy(
+        filterCriteria,
+        currentProducts
       );
 
       await fs.writeFile(this.path, JSON.stringify(currentProducts), "utf-8");
@@ -137,13 +147,23 @@ export class ProductManagerFileBased {
 
   async updateProduct(anOriginalProductId, anUpdatedProduct) {
     try {
-      const productToUpdate = await this.getProductById(anOriginalProductId);
       let products = await this.getProducts();
+
+      const filterCriteria = (product) => product.id === anOriginalProductId;
+
+      const productToUpdate = this.getProductFilteredBy(
+        filterCriteria,
+        products
+      );
+
       anUpdatedProduct.id = anOriginalProductId;
+
       const index = products.indexOf(productToUpdate);
+
       if (~index) {
         products[index] = anUpdatedProduct;
       }
+
       await fs.writeFile(this.path, JSON.stringify(products), "utf-8");
     } catch (error) {}
   }

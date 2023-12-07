@@ -1,9 +1,10 @@
 import { ProductManagerMemoryBased } from "./src/main/ProductManager/ProductManagerMemoryBased.js";
 import { ProductManagerFileBased } from "./src/main/ProductManager/ProductManagerFileBased.js";
-
+import { Product } from "./src/main/Product/Product.js";
 import { promises as fs } from "node:fs";
 
-const initializeSampleExecutionWith = (aProductManager) => {
+const sampleExecutionMemoryBased = () => {
+  console.log("Inicio de ejecución de Test en Memoria");
   /* I replicate the same that has been already created for a test, to allow to play with the
    code without adding new tests and complying with the exercise statement. -asalvidio */
 
@@ -16,7 +17,7 @@ const initializeSampleExecutionWith = (aProductManager) => {
     stock: 25,
   };
 
-  const productManager = aProductManager;
+  const productManager = new ProductManagerMemoryBased();
 
   console.log(productManager.getProducts());
 
@@ -29,15 +30,14 @@ const initializeSampleExecutionWith = (aProductManager) => {
   console.log(productManager.getProductById(1));
 
   productManager.getProductById(50);
-};
 
-const sampleExecutionMemoryBased = () => {
-  initializeSampleExecutionWith(new ProductManagerMemoryBased());
+  console.log("Fin de ejecución de Test en Memoria");
 };
 
 const sampleExecutionFileBased = async () => {
+  console.log("Inicio de ejecución de Test en Archivo");
+
   const path = "./resources/Products.json";
-  //initializeSampleExecutionWith(new ProductManagerFileBased(path));
 
   const productManager = new ProductManagerFileBased(path);
 
@@ -50,8 +50,46 @@ const sampleExecutionFileBased = async () => {
     stock: 25,
   };
 
-  console.log(await productManager.getProducts());
+  const updatedProd = new Product({
+    title: "Producto actualizado",
+    description: "Este es un producto actualizado",
+    price: 500,
+    thumbnail: "Sin imagen",
+    code: "abc123",
+    stock: 45,
+  });
+
+  let products = await productManager.getProducts();
+
+  console.log(products);
+
+  await productManager.addProduct(potentialProd);
+
+  products = await productManager.getProducts();
+
+  console.log(products);
+
+  let foundProduct = await productManager.getProductById(1);
+
+  console.log(foundProduct);
+
+  await productManager.updateProduct(1, updatedProd);
+
+  foundProduct = await productManager.getProductById(1);
+
+  console.log(foundProduct);
+
+  await productManager.deleteProduct(1);
+
+  products = await productManager.getProducts();
+
+  console.log(products);
+
+  //To clean the file!
+  await fs.writeFile(path, "[]", "utf-8");
+
+  console.log("Fin de ejecución de Test en Archivo");
 };
 
 sampleExecutionMemoryBased();
-//sampleExecutionFileBased();
+sampleExecutionFileBased();
