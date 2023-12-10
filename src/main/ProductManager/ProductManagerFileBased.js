@@ -33,7 +33,9 @@ export class ProductManagerFileBased {
     try {
       const currentLenght = (await this.getProducts()).length;
       return currentLenght + 1;
-    } catch (error) {}
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   async initializeProductUsing({
@@ -55,7 +57,9 @@ export class ProductManagerFileBased {
         code,
         stock,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   async addProduct(aPotentialProduct) {
@@ -65,7 +69,7 @@ export class ProductManagerFileBased {
 
       const product = await this.initializeProductUsing(aPotentialProduct);
 
-      let products = await this.getProducts();
+      const products = await this.getProducts();
 
       products.push(product);
 
@@ -78,7 +82,9 @@ export class ProductManagerFileBased {
   async getProducts() {
     try {
       return await this.readFileProducts();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   async readFileProducts() {
@@ -142,12 +148,14 @@ export class ProductManagerFileBased {
       );
 
       await fs.writeFile(this.path, JSON.stringify(currentProducts), "utf-8");
-    } catch (error) {}
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   async updateProduct(anOriginalProductId, anUpdatedProduct) {
     try {
-      let products = await this.getProducts();
+      const products = await this.getProducts();
 
       const filterCriteria = (product) => product.id === anOriginalProductId;
 
@@ -165,6 +173,8 @@ export class ProductManagerFileBased {
       }
 
       await fs.writeFile(this.path, JSON.stringify(products), "utf-8");
-    } catch (error) {}
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 }
