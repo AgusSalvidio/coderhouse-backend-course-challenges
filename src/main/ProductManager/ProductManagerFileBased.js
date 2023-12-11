@@ -132,7 +132,7 @@ export class ProductManagerFileBased {
         throw new Error(`No se encuentra el producto con ID ${anId}`);
       return product;
     } catch (error) {
-      console.error(error.message);
+      throw error;
     }
   }
 
