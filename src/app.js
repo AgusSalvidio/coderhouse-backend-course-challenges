@@ -2,6 +2,7 @@ import express from "express";
 import productRouter from "./routers/products.routers.js";
 import __dirname from "../utils.js";
 import handlebars from "express-handlebars";
+import { readFileSync } from "node:fs";
 
 const app = express();
 const PORT = 8080;
@@ -14,6 +15,14 @@ const configureApp = () => {
     "hbs",
     handlebars.engine({
       extname: ".hbs",
+      helpers: {
+        headMeta: () => {
+          return configureTemplateCustomHelperFor("headMeta");
+        },
+        scripts: () => {
+          return configureTemplateCustomHelperFor("scripts");
+        },
+      },
     })
   );
   app.set("view engine", "hbs");
@@ -21,6 +30,12 @@ const configureApp = () => {
   app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
   });
+};
+
+const configureTemplateCustomHelperFor = (aTemplateName) => {
+  const filePath = __dirname + `/views/${aTemplateName}.hbs`;
+  const fileContent = readFileSync(filePath, "utf8");
+  return fileContent;
 };
 
 const configureEndpoints = () => {

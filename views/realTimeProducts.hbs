@@ -1,6 +1,9 @@
 <main>
   <div class="d-flex justify-content-end p-2">
-    <legend class="">Productos</legend>
+    <legend class="">Administrar Productos</legend>
+    <a class="btn btn-md btn-custom" href="#">
+      Agregar
+    </a>
   </div>
   <section>
     <div class="px-1">
@@ -14,6 +17,7 @@
                 <th>Precio</th>
                 <th>Stock</th>
                 <th>Imagen</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -28,10 +32,16 @@
                         class="fa-regular fa-image"
                       ></i></a>
                   </td>
+                  <td class="px-4">
+                    <a href="" class="btn-sm"><i
+                        class="fa-solid fa-xmark"
+                        style="color:#b61212"
+                      ></i></a>
+                  </td>
                 </tr>
               {{else}}
                 <tr>
-                  <td colspan="4">No hay productos</td>
+                  <td colspan="5">No hay productos</td>
                 </tr>
               {{/each}}
             </tbody>
@@ -41,4 +51,3 @@
     </div>
   </section>
 </main>
-<script src="js/index.js"></script>
