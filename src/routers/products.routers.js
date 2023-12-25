@@ -3,23 +3,20 @@ import { ProductManagerFileBased } from "../main/ProductManager/ProductManagerFi
 
 const router = Router();
 
-const PRODUCTS_PATH = "./resources/Products.json";
+const PRODUCTS_PATH = "./resources/ProductsMock.json";
 const productManager = new ProductManagerFileBased(PRODUCTS_PATH);
 
 router.get("/", async (req, res) => {
   try {
-    const { limit } = req.query;
     const products = await productManager.getProducts();
-    if (!limit) {
-      return res.status(200).send(products);
-    } else {
-      const filteredProducts = products.slice(0, limit);
-      return res.status(200).send(filteredProducts);
-    }
+    res.status(200).render("index", {
+      title: "Productos",
+      products: products,
+    });
   } catch (error) {
     return res
       .status(400)
-      .send({ status: "failed", description: error.message });
+      .render("index", { title: "Productos", errorMessage: error.message });
   }
 });
 
