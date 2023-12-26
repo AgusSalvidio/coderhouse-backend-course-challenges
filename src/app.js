@@ -3,6 +3,7 @@ import productRouter from "./routers/products.routers.js";
 import __dirname from "../utils.js";
 import handlebars from "express-handlebars";
 import { readFileSync } from "node:fs";
+import { Server as ServerIO } from "socket.io";
 
 const app = express();
 const PORT = 8080;
@@ -30,10 +31,11 @@ const configureApp = () => {
   );
   app.set("view engine", "hbs");
   app.set("views", __dirname + "/views");
-  app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
-  });
 };
+
+const httpServer = app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
 
 const configureTemplateCustomHelperFor = (aTemplateName) => {
   const filePath = __dirname + `/views/${aTemplateName}.hbs`;
@@ -51,3 +53,9 @@ const initializeApp = () => {
 };
 
 initializeApp();
+
+const socketServer = new ServerIO(httpServer);
+
+socketServer.on("connection", (socket) => {
+  console.log("Client connected!");
+});
