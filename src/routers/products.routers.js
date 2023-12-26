@@ -20,6 +20,17 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/allProducts", async (req, res) => {
+  try {
+    const products = await productManager.getProducts();
+    res.status(200).send(products);
+  } catch (error) {
+    return res
+      .status(400)
+      .send({ title: "Productos", errorMessage: error.message });
+  }
+});
+
 router.get("/realtimeproducts", async (req, res) => {
   try {
     const products = await productManager.getProducts();
@@ -93,4 +104,4 @@ router.put("/:pid", async (req, res) => {
   }
 });
 
-export default router;
+export { router, productManager };

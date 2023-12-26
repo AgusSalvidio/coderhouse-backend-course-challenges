@@ -1,12 +1,16 @@
 import express from "express";
-import productRouter from "./routers/products.routers.js";
+import {
+  productManager,
+  router as productRouter,
+} from "./routers/products.routers.js";
 import __dirname from "../utils.js";
 import handlebars from "express-handlebars";
 import { readFileSync } from "node:fs";
 import { Server as ServerIO } from "socket.io";
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
+const URL = `http://localhost:${PORT}`;
 
 const configureApp = () => {
   app.use(express.json());
@@ -54,8 +58,27 @@ const initializeApp = () => {
 
 initializeApp();
 
-const socketServer = new ServerIO(httpServer);
+const io = new ServerIO(httpServer);
 
-socketServer.on("connection", (socket) => {
+io.on("connection", (socket) => {
   console.log("Client connected!");
+
+  socket.on("deleteProductEvent", (potentialProductToDelete) => {
+    fetch(URL + `/${potentialProductToDelete.id}`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        fetch(URL + "/allproducts", {
+          method: "GET",
+        })
+          .then((response) => response.json())
+          .then((products) => {
+            socket.emit("updateProductTableEvent", products);
+          })
+          .catch((error) => console.log(error));
+      })
+      .catch((err) => console.log(err));
+  });
 });
