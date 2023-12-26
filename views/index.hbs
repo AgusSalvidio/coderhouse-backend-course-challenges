@@ -11,6 +11,7 @@
               <tr>
                 <th>Título</th>
                 <th>Descripción</th>
+                <th>Código</th>
                 <th>Precio</th>
                 <th>Stock</th>
                 <th>Imagen</th>
@@ -21,17 +22,19 @@
                 <tr>
                   <td>{{this.title}}</td>
                   <td>{{this.description}}</td>
+                  <td>{{this.code}}</td>
                   <td>{{this.price}}</td>
                   <td>{{this.stock}}</td>
                   <td class="px-4">
-                    <a href="" class="btn-sm"><i
-                        class="fa-regular fa-image"
-                      ></i></a>
+                    <a
+                      onclick="showImageIdentifiedBy('{{this.thumbnail}}')"
+                      class="btn-sm clickable"
+                    ><i class="fa-regular fa-image"></i></a>
                   </td>
                 </tr>
               {{else}}
                 <tr>
-                  <td colspan="4">No hay productos</td>
+                  <td colspan="6">No hay productos</td>
                 </tr>
               {{/each}}
             </tbody>
@@ -41,4 +44,3 @@
     </div>
   </section>
 </main>
-<script src="js/index.js"></script>

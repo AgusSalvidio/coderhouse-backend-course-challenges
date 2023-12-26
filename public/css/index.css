@@ -188,3 +188,7 @@ tr {
 .error-label {
   color: red;
 }
+
+.clickable {
+  cursor: pointer;
+}

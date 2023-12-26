@@ -16,6 +16,9 @@ const configureApp = () => {
     handlebars.engine({
       extname: ".hbs",
       helpers: {
+        json: (anObject) => {
+          return JSON.stringify(anObject);
+        },
         headMeta: () => {
           return configureTemplateCustomHelperFor("headMeta");
         },
