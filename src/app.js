@@ -81,4 +81,24 @@ io.on("connection", (socket) => {
       })
       .catch((err) => console.log(err));
   });
+  socket.on("addProductEvent", (potentialProductToAdd) => {
+    fetch(URL, {
+      method: "POST",
+      body: JSON.stringify(potentialProductToAdd),
+      headers: { "Content-type": "application/json; charset=UTF-8" },
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        fetch(URL + "/allproducts", {
+          method: "GET",
+        })
+          .then((response) => response.json())
+          .then((products) => {
+            socket.emit("updateProductTableEvent", products);
+          })
+          .catch((error) => console.log(error));
+      })
+      .catch((err) => console.log(err));
+  });
 });

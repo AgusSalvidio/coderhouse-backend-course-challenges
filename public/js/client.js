@@ -24,7 +24,7 @@ const registerNewProduct = () => {
             <input id="stock" type="text" name="stock" class="form-control" placeholder="Stock">
           </div>
           <div class="col-md-6">
-            <label for="code" class="col-form-label">Código:/label>
+            <label for="code" class="col-form-label">Código</label>
             <input id="code" type="text" name="code" class="form-control" placeholder="Código">
           </div>
           <div class="col-md-6">
@@ -47,14 +47,24 @@ const registerNewProduct = () => {
       const code = document.getElementById("code").value;
       const thumbnail = document.getElementById("thumbnail").files[0];
 
-      console.log("Título:", title);
-      console.log("Descripción:", description);
-      console.log("Precio:", price);
-      console.log("Stock:", stock);
-      console.log("Código:", code);
-      console.log("Imagen:", thumbnail);
+      const product = {
+        title: title,
+        description: description,
+        price: parseInt(price),
+        stock: parseInt(stock),
+        code: code,
+        thumbnail: thumbnail,
+      };
 
-      //Hacer magia para guardar la info
+      try {
+        socket.emit("addProductEvent", product);
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.message,
+        });
+      }
     },
   });
 };

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { ProductManagerFileBased } from "../main/ProductManager/ProductManagerFileBased.js";
+import { uploader } from "../../utils.js";
 
 const router = Router();
 
@@ -58,9 +59,13 @@ router.get("/:pid", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", uploader.single("file"), async (req, res) => {
   try {
     const potentialProduct = req.body;
+    if (req.file) {
+      potentialProduct.thumbnail = req.file.path;
+    }
+
     await productManager.addProduct(potentialProduct);
     return res.status(201).send({
       status: "success",

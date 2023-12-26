@@ -63,6 +63,9 @@ export class ProductManagerFileBased {
 
   async addProduct(aPotentialProduct) {
     try {
+      console.log(
+        "Antes del assert el potential es:" + JSON.stringify(aPotentialProduct)
+      );
       this.assertSatisfiesAllRequiredParameters(aPotentialProduct);
       await this.assertCodeIsNotAlreadyStored(aPotentialProduct.code);
 
