@@ -1,8 +1,5 @@
 import express from "express";
-import {
-  productManager,
-  router as productRouter,
-} from "./routers/products.routers.js";
+import { router as productRouter } from "./routers/products.routers.js";
 import __dirname from "../utils.js";
 import handlebars from "express-handlebars";
 import { readFileSync } from "node:fs";
@@ -81,24 +78,15 @@ io.on("connection", (socket) => {
       })
       .catch((err) => console.log(err));
   });
-  socket.on("addProductEvent", (potentialProductToAdd) => {
-    fetch(URL, {
-      method: "POST",
-      body: JSON.stringify(potentialProductToAdd),
-      headers: { "Content-type": "application/json; charset=UTF-8" },
+  socket.on("addedProductEvent", (data) => {
+    console.log(data);
+    fetch(URL + "/allproducts", {
+      method: "GET",
     })
       .then((response) => response.json())
-      .then((json) => {
-        console.log(json);
-        fetch(URL + "/allproducts", {
-          method: "GET",
-        })
-          .then((response) => response.json())
-          .then((products) => {
-            socket.emit("updateProductTableEvent", products);
-          })
-          .catch((error) => console.log(error));
+      .then((products) => {
+        socket.emit("updateProductTableEvent", products);
       })
-      .catch((err) => console.log(err));
+      .catch((error) => console.log(error));
   });
 });

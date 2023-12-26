@@ -59,7 +59,7 @@ router.get("/:pid", async (req, res) => {
   }
 });
 
-router.post("/", uploader.single("file"), async (req, res) => {
+router.post("/", uploader.single("thumbnail"), async (req, res) => {
   try {
     const potentialProduct = req.body;
     if (req.file) {
