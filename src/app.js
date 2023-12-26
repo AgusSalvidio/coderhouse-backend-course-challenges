@@ -63,8 +63,8 @@ const io = new ServerIO(httpServer);
 io.on("connection", (socket) => {
   console.log("Client connected!");
 
-  socket.on("deleteProductEvent", (potentialProductToDelete) => {
-    fetch(URL + `/${potentialProductToDelete.id}`, {
+  socket.on("deleteProductEvent", (potentialProductIDToDelete) => {
+    fetch(URL + `/${parseInt(potentialProductIDToDelete)}`, {
       method: "DELETE",
     })
       .then((response) => response.json())

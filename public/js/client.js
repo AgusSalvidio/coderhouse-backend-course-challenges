@@ -69,10 +69,9 @@ const registerNewProduct = () => {
   });
 };
 
-const deleteProduct = (aProductJSON) => {
-  const product = JSON.parse(aProductJSON);
+const deleteProduct = (aProductID) => {
   Swal.fire({
-    title: `¿Seguro que desea eliminar ${product.title}?`,
+    title: "¿Seguro que desea eliminar el producto?",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#b61212",
@@ -81,7 +80,7 @@ const deleteProduct = (aProductJSON) => {
   })
     .then((result) => {
       if (result.isConfirmed) {
-        socket.emit("deleteProductEvent", product);
+        socket.emit("deleteProductEvent", aProductID);
         refreshProductsTable();
       }
     })
@@ -114,7 +113,7 @@ const refreshProductsTable = async (products) => {
               </td>
               <td class="px-4">
               <a
-              onclick="deleteProduct('${JSON.stringify(product)}')"
+              onclick="deleteProduct('${product.id}')"
               class="btn-sm clickable"
             ><i class="fa-solid fa-xmark" style="color:#b61212"></i></a>
           </td>
