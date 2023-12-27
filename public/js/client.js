@@ -43,20 +43,23 @@ const registerNewProduct = () => {
     confirmButtonColor: "#b61212",
     preConfirm: () => {
       const formData = new FormData(document.getElementById("productForm"));
-
-      try {
-        fetch("/", { method: "POST", body: formData })
-          .then((response) => {
-            if (response.ok) {
-              return response.json();
-            }
-            throw new Error("Error al agregar el producto");
-          })
-          .then((data) => {
-            socket.emit("addedProductEvent", data);
-          });
-      } catch (error) {
-        console.log(error);
+      if (formIsValid()) {
+        try {
+          fetch("/", { method: "POST", body: formData })
+            .then((response) => {
+              if (response.ok) {
+                return response.json();
+              }
+              throw new Error("Error al agregar el producto");
+            })
+            .then((data) => {
+              socket.emit("addedProductEvent", data);
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        return false;
       }
     },
   });
@@ -115,6 +118,46 @@ const refreshProductsTable = async (products) => {
     });
   }
   productsTableBody.innerHTML = content;
+};
+
+const formIsValid = () => {
+  $("#productForm").validate({
+    rules: {
+      title: {
+        required: true,
+      },
+      description: {
+        required: true,
+      },
+      code: {
+        required: true,
+      },
+      price: {
+        required: true,
+        digits: true,
+      },
+      stock: {
+        required: true,
+        digits: true,
+      },
+    },
+    messages: {
+      title: { required: "Campo requerido." },
+      description: { required: "Campo requerido." },
+      code: {
+        required: "Campo requerido.",
+      },
+      price: {
+        required: "Campo requerido.",
+        digits: "Ingrese un precio válido.",
+      },
+      stock: {
+        required: "Campo requerido.",
+        digits: "Ingrese una cantidad de stock válida.",
+      },
+    },
+  });
+  return $("#productForm").valid();
 };
 
 socket.on("updateProductTableEvent", async (products) => {

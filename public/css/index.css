@@ -184,9 +184,9 @@ tr {
   height: 35px;
   width: unset;
 }
-
-.error-label {
+.error {
   color: red;
+  font-style: italic;
 }
 
 .clickable {
