@@ -4,9 +4,9 @@ export class Product {
     this.title = title;
     this.description = description;
     this.price = price;
-    this.thumbnail = thumbnail;
     this.code = code;
     this.stock = stock;
+    !thumbnail ? (this.thumbnail = "") : (this.thumbnail = thumbnail);
   }
   /*In here should be the assertion to generate the product based on the atributes, raising
     an instance creation failed error message, that the manager should handle. But to comply with

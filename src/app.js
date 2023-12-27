@@ -1,43 +1,51 @@
 import express from "express";
-import { ProductManagerFileBased } from "./main/ProductManager/ProductManagerFileBased.js";
+import { router as productRouter } from "./routers/products.routers.js";
+import __dirname from "../utils.js";
+import handlebars from "express-handlebars";
+import { readFileSync } from "node:fs";
+import { Server as ServerIO } from "socket.io";
 
 const app = express();
-const path = "./resources/ProductsMock.json";
-
-const productManager = new ProductManagerFileBased(path);
+const PORT = process.env.PORT || 8080;
+const URL = `http://localhost:${PORT}`;
 
 const configureApp = () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.listen(8080, () => {
-    console.log("Escuchando en el puerto 8080");
-  });
+  app.use(express.static(__dirname + "/public"));
+  app.engine(
+    "hbs",
+    handlebars.engine({
+      extname: ".hbs",
+      helpers: {
+        json: (anObject) => {
+          return JSON.stringify(anObject);
+        },
+        headMeta: () => {
+          return configureTemplateCustomHelperFor("headMeta");
+        },
+        scripts: () => {
+          return configureTemplateCustomHelperFor("scripts");
+        },
+      },
+    })
+  );
+  app.set("view engine", "hbs");
+  app.set("views", __dirname + "/views");
+};
+
+const httpServer = app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
+
+const configureTemplateCustomHelperFor = (aTemplateName) => {
+  const filePath = __dirname + `/views/${aTemplateName}.hbs`;
+  const fileContent = readFileSync(filePath, "utf8");
+  return fileContent;
 };
 
 const configureEndpoints = () => {
-  app.get("/products", async (req, res) => {
-    try {
-      const { limit } = req.query;
-      const products = await productManager.getProducts();
-      if (!limit) {
-        return res.status(200).send(products);
-      } else {
-        const filteredProducts = products.slice(0, limit);
-        return res.status(200).send(filteredProducts);
-      }
-    } catch (error) {
-      return res.status(400).send(error.message);
-    }
-  });
-  app.get("/products/:pid", async (req, res) => {
-    try {
-      const { pid } = req.params;
-      const foundProduct = await productManager.getProductById(parseInt(pid));
-      return res.status(200).send(foundProduct);
-    } catch (error) {
-      return res.status(400).send(error.message);
-    }
-  });
+  app.use("/", productRouter);
 };
 
 const initializeApp = () => {
@@ -46,3 +54,39 @@ const initializeApp = () => {
 };
 
 initializeApp();
+
+const io = new ServerIO(httpServer);
+
+io.on("connection", (socket) => {
+  console.log("Client connected!");
+
+  socket.on("deleteProductEvent", (potentialProductIDToDelete) => {
+    fetch(URL + `/${parseInt(potentialProductIDToDelete)}`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        fetch(URL + "/allproducts", {
+          method: "GET",
+        })
+          .then((response) => response.json())
+          .then((products) => {
+            socket.emit("updateProductTableEvent", products);
+          })
+          .catch((error) => console.log(error));
+      })
+      .catch((err) => console.log(err));
+  });
+  socket.on("addedProductEvent", (data) => {
+    console.log(data);
+    fetch(URL + "/allproducts", {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((products) => {
+        socket.emit("updateProductTableEvent", products);
+      })
+      .catch((error) => console.log(error));
+  });
+});

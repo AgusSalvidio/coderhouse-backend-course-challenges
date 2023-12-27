@@ -10,11 +10,10 @@ export class ProductManagerFileBased {
     title,
     description,
     price,
-    thumbnail,
     code,
     stock,
   }) => {
-    if (!title || !description || !price || !thumbnail || !code || !stock)
+    if (!title || !description || !price || !code || !stock)
       throw new Error("Faltan parámetros");
   };
 
@@ -42,9 +41,9 @@ export class ProductManagerFileBased {
     title,
     description,
     price,
-    thumbnail,
     code,
     stock,
+    thumbnail,
   }) {
     try {
       const id = await this.nextSequentialNumber();
@@ -53,9 +52,9 @@ export class ProductManagerFileBased {
         title,
         description,
         price,
-        thumbnail,
         code,
         stock,
+        thumbnail,
       });
     } catch (error) {
       console.error(error.message);
@@ -75,7 +74,7 @@ export class ProductManagerFileBased {
 
       await fs.writeFile(this.path, JSON.stringify(products), "utf-8");
     } catch (error) {
-      console.error(error.message);
+      throw error;
     }
   }
 

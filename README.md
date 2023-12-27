@@ -1,6 +1,6 @@
 # Coderhouse Backend Course Challenges
 
-![Logo](assets/challenge.png)
+![Logo](/public/assets/challenge.png)
 
 This repo aims to contain all the course challenges.
 
